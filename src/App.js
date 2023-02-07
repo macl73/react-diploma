@@ -1,58 +1,35 @@
 import React from 'react';
 import logo from './logo.svg';
+import { Routes, Route } from "react-router-dom";
 import { Counter } from './features/counter/Counter';
 import './App.css';
+import Header from './components/Header.jsx'
+import Footer from './components/Footer.jsx'
+import HomePage from './components/HomePage.jsx'
+import Catalog from './components/Catalog.jsx'
+import About from './components/About.jsx'
+import Contacts from './components/Contacts.jsx'
+import Cart from './components/Cart.jsx'
+import NotFoundPage from './components/NotFoundPage.jsx'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+    <>
+      <Header />
+      <>
+          <Routes>
+            <Route path="/" exact element={<HomePage />} />
+            <Route path="/catalog" element={<Catalog />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contacts" element={<Contacts />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/404" element={<NotFoundPage />} />
+          </Routes>
+        </>
+      <Footer />
+    </>
   );
 }
 
 export default App;
+/* */
