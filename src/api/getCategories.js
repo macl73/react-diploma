@@ -2,7 +2,11 @@ async function getCategories(url) {
     let response = await fetch(url, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json;charset=utf-8"
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "*",
+        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS"
       },
     });
   

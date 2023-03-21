@@ -1,5 +1,6 @@
 import React from 'react';
 import getItems from "../../api/getItems.js";
+//import useFetchItems from '../../hooks/useFetchItems.js';
 import Item from "../Item";
 import Search from '../Search.jsx'
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,6 +16,7 @@ export default function Catalog() {
   const categories = useSelector(state => state.categories.value);
   const add = useSelector(state => state.addMore.value);
   const searchItems = useSelector(state => state.search.value); 
+
 
   const handleClick = (e, cat) => {
     e.preventDefault()

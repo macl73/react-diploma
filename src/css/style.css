@@ -168,8 +168,18 @@ section {
 }
 
 /* Catalog */
+
 .catalog {
   min-height: 600px;
+}
+
+.card-custom {
+  height: calc(100% - 1em);
+  justify-content: space-between;
+}
+
+.card-body-custom {
+  flex-grow: 0;
 }
 
 .catalog-categories {

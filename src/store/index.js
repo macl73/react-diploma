@@ -5,6 +5,7 @@ import searchReducer from '../slices/search.js';
 import categoriesReducer from '../slices/categories.js';
 import addMoreReducer from '../slices/addMore.js';
 import orderReducer from '../slices/order.js';
+import searchInputReducer from '../slices/searchInput.js';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     categories: categoriesReducer,
     addMore: addMoreReducer,
     order: orderReducer,
+    searchInput: searchInputReducer,
   },
 });
 

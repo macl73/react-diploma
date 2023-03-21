@@ -5,10 +5,10 @@ import Search from './Search.jsx'
 
 export default function Header() {
 
-  const [isVisible, setIsVisible] = useState(false)
+  //const [isVisible, setIsVisible] = useState(false)
   const inCart = useSelector(state => state.order.value); 
 
-  const handleClick = e => {
+  /*const handleClick = e => {
     if (isVisible) {
       if ("") {
         setIsVisible(false)
@@ -18,7 +18,7 @@ export default function Header() {
     } else {
       setIsVisible(true)
     }
-  }
+  }*/
 
   const cartDisplay = () => {
     if (inCart.length === 0 ) {
@@ -52,8 +52,8 @@ export default function Header() {
               </ul>
               <div>
                 <div className="header-controls-pics">
-                <div data-id="search-expander" onClick={() => setIsVisible(!isVisible)} className="header-controls-pic header-controls-search"></div>
-                <Search inHeader={true} visible={isVisible}/>
+                
+                <Search inHeader={true} />
                   <NavLink to="/cart" className={({isActive}) => isActive ? "menu__item menu__item-active" : "menu__item"}>
                     <div className="header-controls-pic header-controls-cart">
                       {cartDisplay()}
