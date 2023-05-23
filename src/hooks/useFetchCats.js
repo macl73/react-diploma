@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-export default function useFetchItems() {
+export default function useFetchCats() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -8,7 +8,7 @@ export default function useFetchItems() {
   async function fetchData() {
     try {
       setLoading(true);
-      let response = await fetch("http://localhost:7070/api/top-sales", {
+      let response = await fetch("http://localhost:7070/api/categories", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -20,7 +20,7 @@ export default function useFetchItems() {
       });
       let result = await response.json();
 
-      setData(result);
+      setData([{id: 11, title: "Все"}, ...result]);
       
     } catch(err) {
       setError(true);

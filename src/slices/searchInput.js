@@ -12,6 +12,5 @@ const searchInputSlice = createSlice({
     }
 });
 
-
 export const { searchInput } = searchInputSlice.actions;
 export default searchInputSlice.reducer;

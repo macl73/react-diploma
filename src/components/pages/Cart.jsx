@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { order } from '../../slices/order.js';
-import sendOrder from '../../api/sendOrder.js'
+import sendOrder from '../../api/sendOrder.js';
 
 export default function Cart() {
 
@@ -11,43 +11,43 @@ export default function Cart() {
   const navigate = useNavigate();
   const [clientData, setClientData] = useState({
     phone: "",
-    adress: ""
-  })
-  const [checked, setChecked] = useState(false)
-  
-  const total = inCart.reduce((sum, item) => sum + item.fullPrice, 0)
+    address: ""
+  });
+  const [checked, setChecked] = useState(false);
+  const total = inCart.reduce((sum, item) => sum + item.fullPrice, 0);
 
   const handleChange = e => {
     const {name, value} = e.target;
-    setClientData(prevData => ({...prevData, [name]: value}));
-  }
+    setClientData(prevData => ({...prevData, [name]: String(value)}));
+  };
 
   const handleDelete = (e, out) => {
-    e.preventDefault()
-    const cartAfterDelete = inCart.filter(item => item !== out)
-    localStorage.setItem("cart", JSON.stringify(cartAfterDelete))
-    dispatch(order(cartAfterDelete))
-  }
+    e.preventDefault();
+    const cartAfterDelete = inCart.filter(item => item !== out);
+    localStorage.setItem("cart", JSON.stringify(cartAfterDelete));
+    dispatch(order(cartAfterDelete));
+  };
 
   const acceptOrder = (e) => {
-    e.preventDefault()
-    if(inCart.length !== 0 && clientData.phone !== "" && clientData.adress !== "" && checked !== false) {
-      const cart = []
-      inCart.forEach(item => cart.push({id: item.id, price: item.price, count: item.count}))
+    e.preventDefault();
+    if(inCart.length !== 0 && clientData.phone !== "" && clientData.address !== "" && checked !== false) {
+      const cart = [];
+      inCart.forEach(item => cart.push({id: item.id, price: item.price, count: item.count}));
       const data = {
         owner: clientData,
         items: cart
-      }
-      sendOrder(data)
-      localStorage.setItem("cart", JSON.stringify([]))
-      dispatch(order([]))
-      e.target.closest("form").reset()
-      alert("Поздравляем! Вы успешно оформили заказ, осталось только оплатить!")
+      };
+
+      sendOrder(data);
+      localStorage.setItem("cart", JSON.stringify([]));
+      dispatch(order([]));
+      e.target.closest("form").reset();
+      alert("Поздравляем! Вы успешно оформили заказ, осталось только оплатить!");
       navigate("/");
     } else {
-      alert("К сожалению, некоторые данные некорректны...")
-    }
-  }
+      alert("К сожалению, некоторые данные некорректны...");
+    };
+  };
 
   return (
     <>
@@ -76,7 +76,6 @@ export default function Cart() {
               <td>{item.fullPrice} руб.</td>
               <td><button className="btn btn-outline-danger btn-sm" onClick={(e) => handleDelete(e, item)}>Удалить</button></td>
             </tr>)}
-            
             <tr>
               <td colSpan="5" className="text-right">Общая стоимость</td>
               <td>{total} руб.</td>
@@ -94,7 +93,7 @@ export default function Cart() {
             </div>
             <div className="form-group">
               <label htmlFor="address">Адрес доставки</label>
-              <input className="form-control" onChange={e => handleChange(e)} id="address" name="adress" placeholder="Адрес доставки" required />
+              <input className="form-control" onChange={e => handleChange(e)} id="address" name="address" placeholder="Адрес доставки" required />
             </div>
             <div className="form-group form-check">
               <input type="checkbox" className="form-check-input" onChange={() => setChecked(!checked)} name="agreed" id="agreement" />

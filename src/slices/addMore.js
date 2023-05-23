@@ -12,6 +12,5 @@ const addMoreSlice = createSlice({
     }
 });
 
-
 export const { addMore } = addMoreSlice.actions;
 export default addMoreSlice.reducer;
