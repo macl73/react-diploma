@@ -41,8 +41,7 @@ export default function Product() {
         .finally(() => setProductIsLoading(false));
     }, [productId, dispatch]);
 
-    const sizeChoose = (e, select) => {
-        e.target.classList.add("selected");
+    const sizeChoose = (select) => {
         setCurrentOrder(prevData => ({...prevData, size: select}));
     };
 
@@ -134,7 +133,7 @@ export default function Product() {
                         </tbody>
                     </table>
                     <div className="text-center">
-                        <p>Размеры в наличии: {product?.sizes.map(size => <span key={size.size} onClick={size.avalible ? (e) => sizeChoose(e, size.size) : undefined} className="catalog-item-size">{size.size}</span>)}</p>
+                        <p>Размеры в наличии: {product.sizes.map(size => <span key={size.size} onClick={size.avalible ? () => sizeChoose(size.size) : null} className={currentOrder.size === size.size ? "catalog-item-size selected" : "catalog-item-size"}>{size.size}</span>)}</p>
                         <p className={currentOrder.size ? "" : "invisible"}>Количество: <span className="btn-group btn-group-sm pl-2">
                                 <button className="btn btn-secondary" onClick={() => decrement()}>-</button>
                                 <span className="btn btn-outline-primary">{number}</span>
