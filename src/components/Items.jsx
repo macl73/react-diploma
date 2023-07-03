@@ -1,45 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Loader from './Loader.jsx';
 import Item from './Item.jsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { items } from '../slices/items.js';
-import { addMore } from '../slices/addMore.js';
+import { items, addItems } from '../slices/items.js';
+import { addMore, addZero } from '../slices/addMore.js';
+import { addMoreButton } from '../slices/addMoreButton.js';
+import { itemsLoader } from '../slices/itemsLoader.js';
+import { itemsError } from '../slices/itemsError.js';
+import { addItemsLoader } from '../slices/addItemsLoader.js'
+import { addItemsError } from '../slices/addItemsError.js'
 import getItems from "../api/getItems.js";
 
 export default function Items() {
-
-  const [addMoreButton, setAddMoreButton] = useState(false);
-  const [itemsAreLoading, setItemsAreLoading] = useState(true);
-  const [itemsHaveError, setItemsHaveError] = useState(false);
-  const [addItemsAreLoading, setAddItemsAreLoading] = useState(false);
-  const [addItemsHaveError, setAddItemsHaveError] = useState(false);
   
   const dispatch = useDispatch();
   const filter = useSelector(state => state.category.value); 
   const itemsToRender = useSelector(state => state.items.value);
   const add = useSelector(state => state.addMore.value);
   const searchItems = useSelector(state => state.search.value); 
+  const addMoreButtonToggle = useSelector(state => state.addMoreButton.value);
+  const itemsAreLoading = useSelector(state => state.itemsLoader.value);
+  const itemsHaveError = useSelector(state => state.itemsError.value); 
+  const addItemsAreLoading = useSelector(state => state.addItemsLoader.value);
+  const addItemsHaveError = useSelector(state => state.addItemsError.value);
 
   useEffect(() => {
+
+    dispatch(addZero());
     let url;
 
     if (filter.id === 11) {
-      url = searchItems === undefined ? "http://localhost:7070/api/items" : `http://localhost:7070/api/items?q=${searchItems}`;
+      url = searchItems === undefined ? process.env.REACT_APP_API_URL + "/items" : process.env.REACT_APP_API_URL + `/items?q=${searchItems}`;
     } else {
-      url = searchItems === undefined ? `http://localhost:7070/api/items?categoryId=${filter.id}` : `http://localhost:7070/api/items?q=${searchItems}&categoryId=${filter.id}`;
+      url = searchItems === undefined ? process.env.REACT_APP_API_URL + `/items?categoryId=${filter.id}` : process.env.REACT_APP_API_URL + `/items?q=${searchItems}&categoryId=${filter.id}`;
     };
 
     function fetchItems() {
-      setItemsHaveError(false);
-      setItemsAreLoading(true);
+      dispatch(itemsError(false));
+      dispatch(itemsLoader(true));
       getItems(url)
       .then(result => {
         dispatch(items(result));
-        (result.length < 6) ? setAddMoreButton(false) : setAddMoreButton(true);
-        dispatch(addMore(6));
+        (result.length < 6) ? dispatch(addMoreButton(false)) : dispatch(addMoreButton(true));
+        dispatch(addMore());
       })
-      .catch(() => setItemsHaveError(true))
-      .finally(() => setItemsAreLoading(false))
+      .catch(() => dispatch(itemsError(true)))
+      .finally(() => dispatch(itemsLoader(false)))
     };
 
     fetchItems();
@@ -49,22 +55,22 @@ export default function Items() {
     let urlForAdd;
 
     if (filter.id === 11) {
-      urlForAdd = searchItems === undefined ? `http://localhost:7070/api/items?offset=${add}` : `http://localhost:7070/api/items?offset=${add}&q=${searchItems}`;
+      urlForAdd = searchItems === undefined ? process.env.REACT_APP_API_URL + `/items?offset=${add}` : process.env.REACT_APP_API_URL + `/items?offset=${add}&q=${searchItems}`;
     } else {
-      urlForAdd = searchItems === undefined ? `http://localhost:7070/api/items?categoryId=${filter.id}&offset=${add}` : `http://localhost:7070/api/items?categoryId=${filter.id}&offset=${add}&q=${searchItems}`;
+      urlForAdd = searchItems === undefined ? process.env.REACT_APP_API_URL + `/items?categoryId=${filter.id}&offset=${add}` : process.env.REACT_APP_API_URL + `/items?categoryId=${filter.id}&offset=${add}&q=${searchItems}`;
     };
 
     function fetchAddItems() {
-      setAddItemsHaveError(false);
-      setAddItemsAreLoading(true);
+      dispatch(addItemsError(false));
+      dispatch(addItemsLoader(true));
       getItems(urlForAdd)
       .then(result => {
-        dispatch(items([...itemsToRender, ...result]));
-        (result.length < 6) ? setAddMoreButton(false) : setAddMoreButton(true);
-        dispatch(addMore(add + 6)); 
+        dispatch(addItems(result));
+        (result.length < 6) ? dispatch(addMoreButton(false)) : dispatch(addMoreButton(true));
+        dispatch(addMore()); 
       })
-      .catch(() => setAddItemsHaveError(true))
-      .finally(() => setAddItemsAreLoading(false))
+      .catch(() => dispatch(addItemsError(true)))
+      .finally(() => dispatch(addItemsLoader(false)))
     };
 
     fetchAddItems();
@@ -82,7 +88,7 @@ export default function Items() {
         </div>
         {addItemsHaveError && <p>Данные не загружены, пожалуйста, проверьте интернет-подключение.</p>}
         {addItemsAreLoading ? <Loader /> : <div className="text-center">
-          <button className={addMoreButton ? "btn btn-outline-primary" : "btn btn-outline-primary d-none"} onClick={() => loadMore()}>Загрузить ещё</button>
+          <button className={addMoreButtonToggle ? "btn btn-outline-primary" : "btn btn-outline-primary d-none"} onClick={() => loadMore()}>Загрузить ещё</button>
         </div>}
       </div>}
     </>

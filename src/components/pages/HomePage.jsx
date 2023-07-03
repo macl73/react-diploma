@@ -1,17 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import SalesHits from '../SalesHits.jsx';
 import Catalog from './Catalog.jsx';
 
 import { useDispatch } from 'react-redux';
-import { search } from '../../slices/search.js';
-import { searchInput } from '../../slices/searchInput.js';
-
+import { initialSearch } from '../../slices/search.js';
+import { initialSearchInput } from '../../slices/searchInput.js';
+import { addZero } from '../../slices/addMore.js';
+import { searchBar } from '../../slices/searchBar.js';
 
 export default function HomePage() {
 
     const dispatch = useDispatch();
-    dispatch(searchInput(""));
-    dispatch(search(undefined));
+
+    useEffect(() => {
+        dispatch(searchBar(false))
+        dispatch(initialSearch());
+        dispatch(initialSearchInput());
+        dispatch(addZero());
+    }, [dispatch]);
 
     return (
         <>

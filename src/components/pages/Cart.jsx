@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
-import { order } from '../../slices/order.js';
+import { eraseOrder, deleteFromOrder } from '../../slices/order.js';
 import sendOrder from '../../api/sendOrder.js';
 
 export default function Cart() {
@@ -21,14 +21,12 @@ export default function Cart() {
     setClientData(prevData => ({...prevData, [name]: String(value)}));
   };
 
-  const handleDelete = (e, out) => {
-    e.preventDefault();
-    const cartAfterDelete = inCart.filter(item => item !== out);
-    localStorage.setItem("cart", JSON.stringify(cartAfterDelete));
-    dispatch(order(cartAfterDelete));
+  const handleDelete = (out) => {
+    localStorage.setItem("cart", JSON.stringify(inCart.filter(item => item !== out)));
+    dispatch(deleteFromOrder(out));
   };
 
-  const acceptOrder = (e) => {
+  const acceptOrder = e => {
     e.preventDefault();
     if(inCart.length !== 0 && clientData.phone !== "" && clientData.address !== "" && checked !== false) {
       const cart = [];
@@ -40,7 +38,7 @@ export default function Cart() {
 
       sendOrder(data);
       localStorage.setItem("cart", JSON.stringify([]));
-      dispatch(order([]));
+      dispatch(eraseOrder());
       e.target.closest("form").reset();
       alert("Поздравляем! Вы успешно оформили заказ, осталось только оплатить!");
       navigate("/");
@@ -66,7 +64,7 @@ export default function Cart() {
             </tr>
           </thead>
           <tbody>
-            {inCart.map((item, index) => 
+            {inCart?.map((item, index) => 
             <tr key={item.id + item.size}>
               <td >{index + 1}</td>
               <td><NavLink to={`/catalog/${item.id}`}>{item.title}</NavLink></td>
@@ -74,7 +72,7 @@ export default function Cart() {
               <td>{item.count}</td>
               <td>{item.price} руб.</td>
               <td>{item.fullPrice} руб.</td>
-              <td><button className="btn btn-outline-danger btn-sm" onClick={(e) => handleDelete(e, item)}>Удалить</button></td>
+              <td><button className="btn btn-outline-danger btn-sm" onClick={() => handleDelete(item)}>Удалить</button></td>
             </tr>)}
             <tr>
               <td colSpan="5" className="text-right">Общая стоимость</td>

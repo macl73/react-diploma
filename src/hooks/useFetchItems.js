@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react'
 
 export default function useFetchItems() {
@@ -8,7 +9,7 @@ export default function useFetchItems() {
   async function fetchData() {
     try {
       setLoading(true);
-      let response = await fetch("http://localhost:7070/api/top-sales", {
+      let response = await fetch(process.env.REACT_APP_API_URL + "/top-sales", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

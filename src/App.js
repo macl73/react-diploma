@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { order } from './slices/order.js';
+import { savedOrder } from './slices/order.js';
 import { Routes, Route } from "react-router-dom";
 import './App.css';
 import Header from './components/Header.jsx';
@@ -16,10 +16,10 @@ import Product from './components/pages/Product.jsx';
 function App() {
 
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     if (localStorage.cart !== undefined) {
-      dispatch(order(JSON.parse(localStorage.cart)));
+      dispatch(savedOrder());
     };
   }, [dispatch]);
 

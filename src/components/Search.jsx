@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from "react-router-dom";
 import { search } from '../slices/search.js';
 import { searchInput } from '../slices/searchInput.js';
+import { searchBar } from '../slices/searchBar.js';
 
 export default function Search({inHeader}) {
 
-    const searchInputItem = useSelector(state => state.searchInput.value); 
+    const searchInputItem = useSelector(state => state.searchInput.value);
+    const isVisible = useSelector(state => state.searchBar.value); 
     const route = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [isVisible, setIsVisible] = useState(false);
 
     const handleChange = e => {
         dispatch(searchInput(e.target.value));
@@ -27,13 +28,13 @@ export default function Search({inHeader}) {
             const searchInput = document.querySelector(".form-control");
             if (searchInput.value.length === 0) {
                 dispatch(search(searchInputItem));
-                setIsVisible(false);
+                dispatch(searchBar(false))
             } else {
                 dispatch(search(searchInputItem));
                 navigate("/catalog");
             };
         } else {
-            setIsVisible(true);
+            dispatch(searchBar(true))
         };
     };
 

@@ -1,5 +1,5 @@
 async function sendOrder(body = null) {
-  await fetch("http://localhost:7070/api/order", {
+  await fetch(process.env.REACT_APP_API_URL + "/order", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

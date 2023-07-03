@@ -8,7 +8,7 @@ export default function useFetchCats() {
   async function fetchData() {
     try {
       setLoading(true);
-      let response = await fetch("http://localhost:7070/api/categories", {
+      let response = await fetch(process.env.REACT_APP_API_URL + "/categories", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

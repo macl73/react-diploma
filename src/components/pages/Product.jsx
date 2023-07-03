@@ -2,13 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import getItems from '../../api/getItems.js';
-import { order } from '../../slices/order.js';
+import { order, existedOrder } from '../../slices/order.js';
+import { itemsLoader } from '../../slices/itemsLoader.js';
+import { itemsError } from '../../slices/itemsError.js';
+
 import Loader from '../Loader.jsx';
 
 export default function Product() {
 
     const dispatch = useDispatch();
     let inCart = useSelector(state => state.order.value); 
+    const productIsLoading = useSelector(state => state.itemsLoader.value);
+    const productHasError = useSelector(state => state.itemsError.value);
+
     const navigate = useNavigate();
     const [product, setProduct] = useState(undefined);
     const {productId} = useParams();
@@ -21,13 +27,11 @@ export default function Product() {
         count: 1
       });
     const [number, setNumber] = useState(1);
-    const [productIsLoading, setProductIsLoading] = useState(true);
-    const [productHasError, setProductHasError] = useState(false);
 
     useEffect(() => {
-        setProductIsLoading(true);
-        setProductHasError(false);
-        getItems(`http://localhost:7070/api/items/${productId}`)
+        dispatch(itemsError(false));
+        dispatch(itemsLoader(true));
+        getItems(process.env.REACT_APP_API_URL + `/items/${productId}`)
         .then(res => {
             setProduct(res);
             setCurrentOrder(prevData => ({
@@ -37,8 +41,8 @@ export default function Product() {
                 count: 1
             }));
         })
-        .catch(() => setProductHasError(true))
-        .finally(() => setProductIsLoading(false));
+        .catch(() => dispatch(itemsError(true)))
+        .finally(() => dispatch(itemsLoader(false)))
     }, [productId, dispatch]);
 
     const sizeChoose = (select) => {
@@ -67,9 +71,9 @@ export default function Product() {
         e.preventDefault();
         const existInCart = inCart.findIndex(item => item.id === currentOrder.id && item.size === currentOrder.size);
         let actualPrice, actualFullPrice, newCount;
-        setProductIsLoading(true);
-        setProductHasError(false);
-        getItems(`http://localhost:7070/api/items/${productId}`)
+        dispatch(itemsError(false));
+        dispatch(itemsLoader(true));
+        getItems(process.env.REACT_APP_API_URL + `/items/${productId}`)
         .then(res => {
             actualPrice = res.price;
         })
@@ -83,11 +87,11 @@ export default function Product() {
             };
         })
         .then(() => {
-            existInCart !== -1 ? dispatch(order([...inCart.filter(item => (item.id + item.size) !== (currentOrder.id + currentOrder.size)), {...currentOrder, price: actualPrice, fullPrice: actualFullPrice, count: newCount}])) : dispatch(order([...inCart, {...currentOrder, price: actualPrice, fullPrice: actualFullPrice}]));
+            existInCart !== -1 ? dispatch(existedOrder({...currentOrder, price: actualPrice, fullPrice: actualFullPrice, count: newCount})) : dispatch(order({...currentOrder, price: actualPrice, fullPrice: actualFullPrice}));
             existInCart !== -1 ? localStorage.setItem("cart", JSON.stringify([...inCart.filter(item => (item.id + item.size) !== (currentOrder.id + currentOrder.size)), {...currentOrder, price: actualPrice, fullPrice: actualFullPrice, count: newCount}])) : localStorage.setItem("cart", JSON.stringify([...inCart, {...currentOrder, price: actualPrice, fullPrice: actualFullPrice}]));
             navigate("/cart")})
-        .catch(() => setProductHasError(true))
-        .then(() => setProductIsLoading(false))
+        .catch(() => dispatch(itemsError(true)))
+        .then(() => dispatch(itemsLoader(false)))
     };
 
     if (productHasError) {
@@ -133,7 +137,7 @@ export default function Product() {
                         </tbody>
                     </table>
                     <div className="text-center">
-                        <p>Размеры в наличии: {product.sizes.map(size => <span key={size.size} onClick={size.avalible ? () => sizeChoose(size.size) : null} className={currentOrder.size === size.size ? "catalog-item-size selected" : "catalog-item-size"}>{size.size}</span>)}</p>
+                        <p>Размеры в наличии: {product?.sizes.map(size => <span key={size.size} onClick={size.avalible ? () => sizeChoose(size.size) : null} className={currentOrder.size === size.size ? "catalog-item-size selected" : "catalog-item-size"}>{size.size}</span>)}</p>
                         <p className={currentOrder.size ? "" : "invisible"}>Количество: <span className="btn-group btn-group-sm pl-2">
                                 <button className="btn btn-secondary" onClick={() => decrement()}>-</button>
                                 <span className="btn btn-outline-primary">{number}</span>
